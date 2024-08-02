@@ -1,0 +1,25 @@
+---
+- name: Hardening de servidores #name de la playbook
+  hosts: linux #a que grupo voy aplicar este playbook
+  become: true
+  user: sysadmin #usuario con el cual me voy a conectar
+
+  task:
+
+  - name: Configuro opciones de seguridad ssh #asignarle un nombre a la tarea
+    ansible.builtin.lineinfile: #modulo
+      path: /etc/ssh/sshd_config #direccion donde se encuentra el archivo que queremos modificar
+      regexp: '^#PermitRootLogin' #linea que queremos cambiar
+      line: PermitRootLogin no #lo que queremos sustituir
+    notify: Reinicio servidor ssh #funciona como un condicional, si pasa algo, notifica e invoca la tarea dentro del hundler con cierto name
+    register: results_sshd #guarda variable
+
+  - name: Ver resultado de tarea anterior #nombre de tarea
+    ansible.builtin.debug: #modulo
+      var: results_sshd #ejecuta variable results_sshd
+
+  handlers: #el hundler se ejecuta al final del playbook y se ejecuta cuando una tarea lo llama, siempre se ejecuta 1 sola vez por x llamadas
+
+
+#playbooks: es una lista de plays
+#plays: es una lista de tareas
